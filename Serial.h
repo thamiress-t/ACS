@@ -15,7 +15,12 @@
 #include <fstream>
 #include <sstream>
 
-char predefined_port_paths[4][10] = { "Joao", "Maria", "Jose" };
+
+
+struct BufferOutput{
+	char* buffer;
+	short unsigned int buffer_size;
+};
 
 enum LogLevel
 {
@@ -33,15 +38,15 @@ private:
 	int serial_port;
 	struct termios tty;
 	char read_buf[256];
-
+	short unsigned int buffer_size;
 public:
 	void SerialBegin (const char* port_path, unsigned short int baudrate);
 	void Write(const char* msg);
 	void Read();
 	void Close();
-	char* GetBuffer(){
-		return this->read_buf;
-	}
+	BufferOutput GetBuffer();
+	
+	
 
 
 };

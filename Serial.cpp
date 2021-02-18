@@ -1,3 +1,6 @@
+#include "Serial.h"
+
+
 void Serial::SerialBegin(const char* port_path, unsigned short int baudrate = B115200)
 {
 	this->serial_port = open(port_path, O_RDWR);
@@ -62,11 +65,22 @@ void Serial::Read()
 	// Read bytes. The behaviour of read() (e.g. does it block?,
 	// how long does it block for?) depends on the configuration
 	// settings above, specifically VMIN and VTIME
-	int num_bytes = read(this->serial_port, &this->read_buf, sizeof(this->read_buf));
+	short unsigned int num_bytes = read(this->serial_port, &this->read_buf, sizeof(this->read_buf));
+	this->buffer_size = num_bytes;
 }
 
 	   void Serial::Close()
 {
 
 	close(this->serial_port);
+}
+
+
+BufferOutput Serial::GetBuffer()
+{
+	BufferOutput out_buffer;
+	
+	out_buffer.buffer = this->read_buf;
+	out_buffer.buffer_size = this->buffer_size;
+	return out_buffer;
 }
