@@ -1,30 +1,43 @@
 #ifndef Attenuator_H
 #define Attenuator_H
 
-class Attenuator{
-	public:
-	
-	enum LogLevel{
-		EXIT_ERROR,
-		EXIT_SUCCESSFULLY,
-		ATTENUATOR_1,
-		ATTENUATOR_2,
-		ATTENUATOR_3,
-		ATTENUATOR_4
-	};
-	
-	char* GetSN(const char* port_path);
-	short int ConfigurationSetup(int serial_port);
-	short int DefineSN(const char* port_path);
-	void Write(short int serial_port, unsigned const char msg[], unsigned short int msg_size);
-	short int Read(short int serial_port, char read_buf[], short int read_buf_size);
-	void Close(short int serial_port);
-	void DefineSN();
-	
-	private:
-	unsigned short int serial_number;
-	unsigned short int serial_port;
+#include "Serial.h"
+
+
+class Attenuator
+{
+private:
+	Serial serial;
+	const char* serial_number;
+	const char* serial_port;
+public:
+
+	Attenuator (const char* serial_number);
+	int Atenuar(float pot);
+	const char* GetSN(const char* port_path);
 };
 
+
+Attenuator::Attenuator (const char* serial_number)
+{
+	int defined_port;
+	//four indicates the row_size of matrix "predefined_port_paths"
+	for (int i = 0; i < 4; i++)
+	{
+		this->serial.SerialBegin(predefined_port_paths[i]);
+
+		const char msg[] = "INFO";
+		this->serial.Write(msg);
+		
+		if (strcmp(serial_number,this->serial.GetBuffer())==0)
+		{
+			break;
+		}	
+     	 this->serial.Close();
+	}
+	
+	this->serial_port = predefined_port_paths[defined_port];
+	this->serial_number = serial_number;
+}
 
 #endif
