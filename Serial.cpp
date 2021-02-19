@@ -3,6 +3,7 @@
 
 void Serial::SerialBegin(const char* port_path, unsigned short int baudrate = B115200)
 {
+	printf("\nOpening port: '%s'\n", port_path);
 	this->serial_port = open(port_path, O_RDWR);
 
 	// Create new termios struc, we call it 'tty' for convention
@@ -44,6 +45,8 @@ void Serial::SerialBegin(const char* port_path, unsigned short int baudrate = B1
 	{
 		printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
 	}
+	usleep(50000);
+	tcflush(this->serial_port,TCIOFLUSH);
 }
 
 
@@ -57,16 +60,28 @@ void Serial::Write(const char* msg)
 
 void Serial::Read()
 {
+	
 	// Normally you wouldn't do this memset() call, but since we will just receive
 	// ASCII data for this example, we'll set everything to 0 so we can
 	// call printf() easily.
-	memset(&this->read_buf, '\0', sizeof(this->read_buf));
+	memset(&this->read_buf,0, this->Nbuffer);
 	
 	// Read bytes. The behaviour of read() (e.g. does it block?,
 	// how long does it block for?) depends on the configuration
 	// settings above, specifically VMIN and VTIME
-	short unsigned int num_bytes = read(this->serial_port, &this->read_buf, sizeof(this->read_buf));
+	short unsigned int num_bytes = read(this->serial_port, &this->read_buf,this->Nbuffer);
+
+#ifdef DEBUG_SERIAL
+		printf("INFO: %s N=%d\n",read_buf,num_bytes);
+#endif
+
 	this->buffer_size = num_bytes;
+
+/*	printf("\nThe read information is: '%s'\n",this->read_buf);
+	if (num_bytes < 0) {
+      printf("Error reading: %s", strerror(errno));
+    }*/
+
 }
 
 	   void Serial::Close()

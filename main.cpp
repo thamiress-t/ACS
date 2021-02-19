@@ -1,10 +1,26 @@
+#include  <string>
 #include "Attenuator.h"
 
 
 int main() {
-	Attenuator attenuator1("SN1"), attenuator2("SN2"), attenuator3("SN3"), attenuator4("SN4");
+	
+	using namespace std;
+	Attenuator  attenuator3;//, attenuator4("R3160950387");
+	
+	string SN="R3160950387";
+	string test=" Teste R316 fim\n";
+	
+	//cout << SN << endl;
+	//cout << test << endl;
+	//cout << (int)test.find(SN) << endl << flush;
+
+	usleep(500000);
 	
 	
+	attenuator3.init(SN);
+	
+	
+/*	
 	std::ifstream file("tabela_teste.txt");
 	
 	double attenuation[2*4];
@@ -24,6 +40,16 @@ int main() {
 	for(int i = 0; i < n_lines*4; i++){
 		printf(" %f",attenuation[i]);
 	}
+	
+	attenuator3.AttenuatePot(attenuation[1]);
+	attenuator4.AttenuatePot(attenuation[2]);
+	*
+	* 
+	* 
+	* 
+	* 
+	*  
+	*/
 	
 	return 0; 
 }

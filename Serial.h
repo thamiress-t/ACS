@@ -14,7 +14,9 @@
 #include <unistd.h> // write(), read(), close()
 #include <fstream>
 #include <sstream>
+#include <unistd.h>
 
+//#define DEBUG_SERIAL
 
 
 struct BufferOutput{
@@ -37,9 +39,12 @@ class Serial
 private:
 	int serial_port;
 	struct termios tty;
-	char read_buf[256];
+	
 	short unsigned int buffer_size;
 public:
+	const unsigned short int Nbuffer=128;
+	char read_buf[128];
+
 	void SerialBegin (const char* port_path, unsigned short int baudrate);
 	void Write(const char* msg);
 	void Read();
