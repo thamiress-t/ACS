@@ -1,93 +1,104 @@
 #include "Attenuator.h"
 
-char predefined_port_paths[4][20] = { "/dev/ttyACM0","/dev/ttyACM1","path1", "path2"};
+void Attenuator::init() {
+    using namespace std;
+    serialPorts2scan.insert("/dev/ttyACM0");
+    serialPorts2scan.insert("/dev/ttyACM1");
+    serialPorts2scan.insert("/dev/ttyACM2");
+    serialPorts2scan.insert("/dev/ttyACM3");
+    serialPorts2scan.insert("/dev/ttyUSB0");
+    serialPorts2scan.insert("/dev/ttyUSB1");
+    serialPorts2scan.insert("/dev/ttyUSB2");
+    baudrate = 115200;
+}
 
-Attenuator::Attenuator() {
+Attenuator::Attenuator(const char* serialNumber) {
+    this->serialNumber = serialNumber;
+	init();
 
 }
 
-Attenuator& Attenuator::init(std::string serial_number)
-{
-	using namespace std;
-	string SN;
-	//four indicates the row_size of matrix "predefined_port_paths"
-	for (int i = 0; i < 1; i++)
-	{		
-		printf("\nTrying ports...\n");
-		SN=GetSN(predefined_port_paths[i]);
-    	cout << ">>>> SN: " <<  SN << endl << flush;
+Attenuator& Attenuator::connect() {
 
-		cout << endl;
-		cout << "serial_number:" << serial_number << endl;
-		cout << (SN.find(serial_number)!=std::string::npos) << " " ;
-		cout << (int) (SN.find(serial_number)) << endl << flush;
-		
-	}
-	
-	this->serial_number = serial_number;
-	
-	return *this;
+    using namespace std;
+    serialPort = "";
+    for (set<string>::iterator it = serialPorts2scan.begin(); it != serialPorts2scan.end(); ++it) {
+        //cout << "Tantando conectar em " << (*it) << endl;
+        string SN = getSN(it->c_str(), baudrate);
+        cout << "SN=" << SN << "-" << serialNumber << endl;
+        if (serialNumber.compare(SN) == 0) {
+            serialPort = (*it);
+            break;
+        }
+    }
+
+
+    serial.sopen(serialPort.c_str(), baudrate);
+    return *this;
 }
 
+Attenuator& Attenuator::unconnect() {
+    if (serial.isOpen())
+        serial.sclose();
 
-void Attenuator::AttenuatePot (double potency)
-{
-	char command[] = "SAA ";
-	this->serial.SerialBegin(this->serial_port, B115200);
-	this->serial.Write(strcat(command, std::to_string(potency).c_str()));
-	this->serial.Close();
+    return *this;
 }
 
-
-std::string GetSN(const char* port_path){
-	using namespace std;
-	char* serial_number;
-	
-	Serial serial;
-	serial.SerialBegin(port_path, B115200);
-	
-	const char msg[] = "INFO";
-	
-	serial.Write(msg);	
-	usleep(5000);
-	
-	stringstream ss;
-	int pos;
-	bool SN_search_ok=false;
-	
-	for(int i=0;i<10;++i) {
-		serial.Read();
-		ss << serial.read_buf;
-		pos=ss.str().find("SN:");
-		
-		if(pos!=std::string::npos) 
-		{	
-			if((pos+12)<ss.str().size())
-			{
-				SN_search_ok=true;
-				break;
-			}
-		}
-	}
-	
-	
-	string SN="";
-	
-	if(SN_search_ok) {
-		SN=ss.str().substr(pos+3,12);
-	}
-	
-	#ifdef DEBUG_ATTENUATOR
-	cout << "********************************************" << endl;
-	cout << "Buffer:" << endl << ss.str() << endl;
-	cout << "********************************************" << endl;
-	cout << "SN: " << SN << endl;
-	cout << "********************************************" << endl;
-
-	#endif
-	serial.Close();
-	
-	return SN;
+bool Attenuator::isConnected() {
+    return serial.isOpen();
 }
 
-Attenuator::~Attenuator(){}
+std::string Attenuator::getSerialPort() {
+    if (serial.isOpen())
+        return serialPort;
+
+    return "";
+}
+
+Attenuator& Attenuator::AttenuatePot(const float powerdB) {
+    if (serial.isOpen()) {
+        using namespace std;
+
+        string cmd = ("SAA ");
+        cmd = cmd + to_string(powerdB);
+        serial.swrite(cmd.c_str());
+    }
+
+    return *this;
+}
+
+std::string getSN(const char* serialPort, unsigned int baudrate) {
+    using namespace std;
+    TSerial serial;//(serialPort,baudrate);
+    
+    serial.sopen(serialPort);
+    serial.sflush();
+    
+    string SN = "";
+
+    if (serial.isOpen()) {
+        msleep(3500);
+        serial.swrite("INFO\n");
+        msleep(50);
+        stringstream ss;
+
+        while (serial.sread() > 0) {
+            ss << serial.read_buf;
+        }
+
+        string msg = ss.str();
+        //cout << msg << endl;
+        std::size_t found = msg.find("SN:");
+
+        if (found != std::string::npos) {
+            SN = msg.substr(found + 4, 11);
+        }
+    }
+
+    return SN;
+}
+
+Attenuator::~Attenuator() {
+    if (serial.isOpen())
+        serial.sclose();
+}

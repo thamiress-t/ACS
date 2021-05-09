@@ -1,4 +1,3 @@
-␍␊
 [11:02:39:995] Adaura Technologies R3 Series 1-Channel RF Attenuator (95dB, 6GHz)␍␊
 [11:02:39:995] ␍␊
 [11:02:39:995] ---- Device Information ----␍␊

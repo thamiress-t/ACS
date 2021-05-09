@@ -1,58 +1,47 @@
 #ifndef Serial_H
 #define Serial_H
 
-#include <stdio.h>
 #include <string.h>
-#include <stdio.h>
-
 #include <iostream>
-#include <vector>
-// Linux headers
+#include <sys/file.h>
 #include <fcntl.h> // Contains file controls like O_RDWR
 #include <errno.h> // Error integer and strerror() function
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
-#include <fstream>
-#include <sstream>
-#include <unistd.h>
+#include "ToolBoxAndUtilities.h"
 
-//#define DEBUG_SERIAL
+//#define DEBUG_SERIAL_ALL
+
+#ifdef DEBUG_SERIAL_ALL
+#define DEBUG_SERIAL_OPEN
+#define DEBUG_SERIAL_WRITE
+#define DEBUG_SERIAL_READ
+#define DEBUG_SERIAL_CLOSE
+#define DEBUG_SERIAL_FLUSH
+#define DEBUG_SERIAL_BUFFER
+#endif
 
 
-struct BufferOutput{
-	char* buffer;
-	short unsigned int buffer_size;
-};
-
-enum LogLevel
-{
-	EXIT_ERROR = 0,
-	EXIT_SUCCESSFULLY,
-	ATTENUATOR_1,
-	ATTENUATOR_2,
-	ATTENUATOR_3,
-	ATTENUATOR_4
-};
-
-class Serial
-{
+class TSerial {
 private:
-	int serial_port;
-	struct termios tty;
-	
-	short unsigned int buffer_size;
+    int serial_port=0;
+    struct termios tty;
+    virtual void initSerialPort(void);
 public:
-	const unsigned short int Nbuffer=128;
-	char read_buf[128];
+    static const unsigned short int MaxBufferSize = 255;
+    short unsigned int strSize;
+    char read_buf[MaxBufferSize];
 
-	void SerialBegin (const char* port_path, unsigned short int baudrate);
-	void Write(const char* msg);
-	void Read();
-	void Close();
-	BufferOutput GetBuffer();
-	
-	
-
-
+    TSerial();
+    TSerial(const char* port_path, unsigned int baudrate = B115200);
+    TSerial& sopen(const char* port_path, unsigned int baudrate = B115200);
+    bool isOpen();
+    TSerial& swrite(const char* msg);
+    int sread();
+    TSerial& sflush();
+    TSerial& sclose();
+    std::string str();
+    ~TSerial();
 };
+
 #endif
