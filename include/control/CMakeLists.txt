@@ -1,0 +1,11 @@
+add_library(
+	Attenuator.h
+	Serial.h
+	SystemTests.h
+	TAcs.h
+	TCommand.h
+	TLogSystem.h
+	ToolBoxAndUtilities.h
+	TPhShifter.h
+	TTable.h
+)

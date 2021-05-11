@@ -13,7 +13,8 @@
 
 #ifndef TLOGSYSTEM_H
 #define TLOGSYSTEM_H
-
+#include <string>
+#include <chrono>
 class TLogSystem {
 public:
     enum { FILENAME_FLAG=0x01, DATA_FLAG=0x02, TIME_FLAG=0x04, LINE_FLAG=0x08, STDOUT=0x10, STDERR=0x20, OUTFILE=0x40, ENABLE=0x80};

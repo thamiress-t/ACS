@@ -95,7 +95,7 @@ TCommand& TCommand::parseCmd(int argc, char** argv) {
 				
 				TTable::TLVector v=tab.lineVector(angle);
 				
-				for(int i=0;i<v.size() - 1;++i)
+				for(int i=0;i< int(v.size()) - 1;++i)
 					args[i] = v[i + 1];
 				break;
 			}
@@ -107,7 +107,7 @@ TCommand& TCommand::parseCmd(int argc, char** argv) {
 				
 				TTable::TLVector v=tab.lineVector(angle);
 				
-				for(int i=0;i<v.size() - 1;++i)
+				for(int i=0;i< int(v.size()) - 1;++i)
 					args[i] = v[i + 1];
 				break;
 			}
