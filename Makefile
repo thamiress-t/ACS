@@ -11,7 +11,7 @@ all:
 	g++ -c TPhShifter.cpp -o TPhShifter.o
 	g++ -c TCommand.cpp -o TCommand.o
 	g++ -c TAcs.cpp -o TAcs.o 
-	g++ main.cpp TCommand.o TPhShifter.o TAcs.o TTable.o ToolBoxAndUtilities.o Serial.o Attenuator.o -o acs -lrt -lpthread
+	g++ main.cpp TCommand.o TPhShifter.o TAcs.o TTable.o ToolBoxAndUtilities.o Serial.o Attenuator.o -o acs -lrt -lpthread -lpigpio
 
 run: 
 	./main

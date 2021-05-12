@@ -19,7 +19,7 @@
 #include <string>
 
 class TPhShifter {
-protected:
+private:
     float step = -1.4606;
     float offset = 0;
     unsigned short phaseInt = 0;
@@ -32,6 +32,7 @@ public:
     virtual ~TPhShifter();
     
     TPhShifter(const float off);
+    void printPhase();
 
     inline float int2Deg(const int i) {
         return ((i&0xff) * step + offset);

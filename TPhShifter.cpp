@@ -61,3 +61,7 @@ std::string TPhShifter::str() {
     }
     return ss.str();
 }
+
+void TPhShifter::printPhase() {
+    printf("\nphase is %hu\n", this->phaseInt);
+}

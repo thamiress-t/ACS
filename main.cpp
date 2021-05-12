@@ -10,7 +10,8 @@
 #include "TTable.h"
 #include "TCommand.h"
 #include "TAcs.h"
-
+#include "Attenuator.h"
+#include <pigpio.h>
 
 
 int main(int argc, char** argv) {
@@ -18,10 +19,16 @@ int main(int argc, char** argv) {
     using namespace std;
 
 	TAcs teste;
-	teste.AttenuatePot();
-	teste.SetPhases();
-	
+	//Attenuator att("R3160950386");
 	teste.parseCmd(argc,argv);
+	teste.connectAttenuators();
+	teste.AttenuatePot();
+	
+	//att.connect();
+	//att.AttenuatePot(50);
+	teste.setPhases();
+	//teste.printTest();
+	
 	
 	
 	//teste.printTest();

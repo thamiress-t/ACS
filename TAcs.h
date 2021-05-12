@@ -35,7 +35,7 @@
  */
 
 
-//#define ARCH_RASP 1
+#define ARCH_RASP 1
 #define DEBUG_MODE 1
 
 #ifdef ARCH_RASP
@@ -45,7 +45,7 @@
 class TAcs: public TCommand{
 private:
 	TPhShifter ps[3];
-	Attenuator att0{"1"},att1{"2"},att2{"3"},att3{"4"};
+	Attenuator att0{"R3160950384"},att1{"R3160950386"},att2{"R3160950383"},att3{"R3160950387"};
 public:
 	
     TAcs(const TAcs& orig);
@@ -112,8 +112,9 @@ public:
     }
 
     TAcs& writePhases() {
-        for (int i = 0; i < 3; ++i)
-            ps[i].writeDat();
+        for (int i = 0; i < 3; ++i){
+		ps[i].writeDat();
+	}
 #ifdef ARCH_RASP
         for (int j = 0; j < 8; ++j) {
             gpioWrite(mapPort0[j], ps[0].dat[j]); /* on */

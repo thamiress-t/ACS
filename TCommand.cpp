@@ -92,7 +92,6 @@ TCommand& TCommand::parseCmd(int argc, char** argv) {
 				TTable tab;
 				tab.load(strcat(argv[4],"_angulos20_60_135.csv"));//"arranjo1_angulos20_60_135.csv");
 				short int angle = (short int)strtod(argv[3],NULL);
-				
 				TTable::TLVector v=tab.lineVector(angle);
 				
 				for(int i=0;i<v.size() - 1;++i)
@@ -115,6 +114,7 @@ TCommand& TCommand::parseCmd(int argc, char** argv) {
 			break;
 		case 10:
 			if (strcmp(argv[2], "-pi") == 0) {
+				inputType = 1;
 				for(int i = 0; i < 7; i++)
 					this->args[i] = (float)strtod(argv[i + 3],NULL);
 				break;

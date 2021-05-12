@@ -55,36 +55,39 @@ TAcs::TAcs() {
 
 void TAcs::setPhases() {
 	float* ph_test = getPhases();
-	if(this->isInt())
+	
+	if(this->isInt()){
+		for(int i = 0; i < 3; i++){
+			this->ps[i].setPhaseInt(ph_test[i]);
+		}
+	}
+	else{
 		for(int i = 0; i < 3; i++)
 			this->ps[i].setPhaseDeg(ph_test[i]);
-	else
-		for(int i = 0; i < 3; i++)
-			this->ps[i].setPhaseInt(ph_test[i]);
+	}
+	writePhases();
 }
 
 void TAcs::connectAttenuators(){
 	this->att0.connect();
 	if(this->att0.isConnected()) 
-        std::cout << "conexão ok! " << att0.getSerialPort() << std::endl;
+        	std::cout << "conexão ok! " << att0.getSerialPort() << std::endl;
 	
 	this->att1.connect();
 	if(this->att1.isConnected()) 
-        std::cout << "conexão ok! " << att1.getSerialPort() << std::endl;
+        	std::cout << "conexão ok! " << att1.getSerialPort() << std::endl;
 	
 	this->att2.connect();
 	if(this->att2.isConnected()) 
-        std::cout << "conexão ok! " << att2.getSerialPort() << std::endl;
+        	std::cout << "conexão ok! " << att2.getSerialPort() << std::endl;
 	
 	this->att3.connect();
 	if(this->att3.isConnected()) 
-        std::cout << "conexão ok! " << att3.getSerialPort() << std::endl;
+        	std::cout << "conexão ok! " << att3.getSerialPort() << std::endl;
 }
 
 void TAcs::AttenuatePot(){
 	float* pot = this->getAttenuations();
-	/* for(int i = 0; i < 4; i++)
-		printf("%f ", pot[i]); */
 	
 	this->att0.AttenuatePot(pot[0]);
 	this->att1.AttenuatePot(pot[1]);
