@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef float ph_arr[3];
+typedef float attenuation_arr[4];
 class TCommand {
 public:
     TCommand();
@@ -29,11 +31,12 @@ public:
     virtual TCommand& parseCmd(const char *cmd,const char *fs=" ");
     virtual TCommand& parseCmd(int argc, char** argv);
 	void printTest();
-	float* getAttenuations();
-	float* getPhases();
+	attenuation_arr& getAttenuations(attenuation_arr& out_arr);
+	ph_arr& getPhases(ph_arr& out_arr);
 	bool isInt();
 private:
-	float args[7];
+	float attenuations[4];
+	float ph[3];
 	bool inputType;
 };
 

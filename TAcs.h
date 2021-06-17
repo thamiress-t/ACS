@@ -35,31 +35,55 @@
  */
 
 
-#define ARCH_RASP 1
+//#define ARCH_RASP 1
 #define DEBUG_MODE 1
 
 #ifdef ARCH_RASP
 #include <pigpio.h>
 #endif
 
+#include "TTcpIPServer.h"
+#include "TTcpIPClient.h"
+#include <memory>
+#include <csignal>
+#define LEN 10000
+
+#define SERVER_ADDR "127.0.0.1"//"192.168.0.221" //endereço da comunicaçao entre o tcpserver e o com master
+#define  SERVER_ADDR1 "192.168.1.101" //endereço entre tcpclient e o outstation
+#define  SERVER_ADDR2 "192.168.26.124"
+#define  SERVER_ADDR3 "192.168.26.124"
+
+
+
 class TAcs: public TCommand{
 private:
 	TPhShifter ps[3];
 	Attenuator att0{"R3160950384"},att1{"R3160950386"},att2{"R3160950383"},att3{"R3160950387"};
+
+    TTcpIPServer server;
+    int COIPort;
+    char DNP3Frame[LEN];
+    int DNP3FrameLen;
+    int DNP3Addr;
 public:
-	
     TAcs(const TAcs& orig);
     TAcs();
     virtual ~TAcs();
-	
-	
+
+	/* Communication*/
+	int connectToCOI(char* COIAddr, int COIPort);
+	int readDNP3frame ();
+	int getDNP3Address ();
+	int talkToOutstation (char* outstationAddr,int port,pthread_t t1);
+	void closeConnection();
+
+    /* Setting attenuations and phase shifts*/
 	void setPhases();
-	
-	//Attenuator
+
 	void connectAttenuators();
 	void AttenuatePot();
 	void unconnectAttenuators();
-	//Phase Shifter
+
     TAcs& loadParameters(std::string file = "offset.txt") {
         using namespace std;
 
@@ -130,6 +154,8 @@ public:
     const short unsigned int mapPort2[8] = {8, 25, 24, 23, 18, 7, 1, 12};
 };
 
+int GetPort(int DNP3Address);
+char* GetIPAddress(int DNP3Address);
 
 #endif /* TACS_H */
 
